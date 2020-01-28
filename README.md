@@ -1,6 +1,8 @@
 # dlmonte_python_setup
  Setup scripts and object for DL_monte 
+ 
 Useful files included:
+
 Controlwriter - A simple class-based script for writing DL_Monte control files
 windowscan.py - A script for doing umbrella sampling with DL_Monte and transition matrix files
 tmatrix_combine.py - a simple script for taking multiple tmatrix files in and summing them
