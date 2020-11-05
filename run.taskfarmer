@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#SBATCH --job-name=TMMFARMER
+#SBATCH --partition=batch
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=16
+#SBATCH --time=24:00:00
+#SBATCH --mail-type=END
+#SBATCH --mail-user=jrhm21@bath.ac.uk #Change this to your email!
+#SBATCH --account=re-ce1100
+
+# -- Set up the environment
+module purge
+module load slurm
+module load group ce-molsim stack
+module load gnuplot
+module load openmpi
+module load taskfarmer
+
+#locate the experiment directory
+dt=$(date '+%d/%m/%Y %H:%M:%S');
+echo "$(date '+%d/%m/%Y %H:%M:%S')"
+# -- Run
+echo "Starting scans on $(date '+%d/%m/%Y %H:%M:%S')"
+mpiexec -np 16 taskfarmer -f taskfarm.scan1
+
+bash tm_combine_1.sh
+
+echo "Starting scan2 on $(date '+%d/%m/%Y %H:%M:%S')"
+mpiexec -np 16 taskfarmer -f taskfarm.scan2
+
+bash tm_combine_2.sh
+
+echo "Finished scans. Starting exploit simulations on $(date '+%d/%m/%Y %H:%M:%S')"
+mpiexec -np 16 taskfarmer -f taskfarm.exploit
+
+bash tm_combine_3.sh
+
+echo "Finished exploits. Starting final simulation on $(date '+%d/%m/%Y %H:%M:%S')"
+bash dlmonte.sh finalcombine
